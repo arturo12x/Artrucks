@@ -14,7 +14,7 @@ use App\Http\Controllers\ChoferController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth.login');
 });
 
 /*
@@ -28,4 +28,12 @@ Route::get('/chofer', function () {
 
 Route::get('/chofer/create',[ChoferController::class,'create']);
 */
-Route::resource('chofer',ChoferController::class);
+Route::resource('chofer',ChoferController::class)->middleware('auth');
+Auth::routes(['register'=>false,'reset'=>false]);
+
+Route::get('/home',[ChoferController::class,'index'])->name('home');
+
+Route::group(['middleware'=>'auth'],function () {
+    Route::get('/',[ChoferController::class,'index'])->name('home');
+
+});

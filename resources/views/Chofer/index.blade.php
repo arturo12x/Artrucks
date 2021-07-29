@@ -1,11 +1,14 @@
-vista index
+@extends('layouts.app')
+@section('content')
+<div class="container">
 
 @if(Session::has('mensaje'))
 {{Session::get('mensaje')}}
 @endif
 
-<a href="{{url('chofer/create')}}">Registrar nuevo chofer</a>
-
+<a href="{{url('chofer/create')}}" class="btn btn-success">Registrar nuevo chofer</a>
+<br>
+<br>
 <table class="table table-light">
     <thead class="thead-light">
         <tr>
@@ -26,7 +29,7 @@ vista index
             <td>{{$chofer->id}}</td>
             <td>
             
-        <img src="{{asset('storage').'/'.$chofer->foto}}" alt="">
+        <img class="img-thumbnail img-fluid" width="100" src="{{asset('storage').'/'.$chofer->foto}}" alt="">
             {{--PARA QUE FUNCIONE LO DEL STORAGE HAY QUE EJECUTAR PRIMER PHP ARTISAN STORAGE:LINK!---}}
             </td>
 
@@ -36,15 +39,18 @@ vista index
             <td>{{$chofer->fechaNacimiento}}</td>
             <td>{{$chofer->correo}}</td>
             <td>
-                <a href="{{url('/chofer').'/'.$chofer->id.'/edit'}}">Editar</a>
-            
-                
-                <form action="{{ url('/chofer').'/'.$chofer->id}}" method="post">
+                <a href="{{url('/chofer').'/'.$chofer->id.'/edit'}}" class="btn btn-warning">
+                    
+                    Editar
+                </a>
+            |
+               
+                <form action="{{ url('/chofer').'/'.$chofer->id}}" method="post" class="d-inline">
                 @csrf {{-- EL CSRF ES UNA LLAVE O UN TOKEN OBLIGATORIO DE USAR EN LARAVEL ES POR SEGURIDAD PARA QUE UN FORMULARIO NO PUEDA SUPLANTAR!--}}
 
                 {{method_field('DELETE')}} {{--ESTO ES PORQUE EL DELETE CUANDO SE CONSULTA EL PHP ARTISAN R:L NOS DICE QUE PARA ELIMINAR LOS DATOS REQUIEREN SER ENVIADOS POR EL METODO DELETE!--}}
 
-                <input type="submit" onclick="return confirm('¿Esta seguro que desea eliminar el registro?')" value="borrar">
+                <input class="btn btn-danger" type="submit" onclick="return confirm('¿Esta seguro que desea eliminar el registro?')" value="borrar">
             </form>
                 </td>
         </tr>
@@ -53,3 +59,5 @@ vista index
 
 
 </table>
+</div>
+@endsection

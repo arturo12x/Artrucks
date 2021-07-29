@@ -1,4 +1,3 @@
-VISTA CREATE
 
 <form action="{{url('/chofer')}}" method="post" enctype="multipart/form-data">
     @csrf

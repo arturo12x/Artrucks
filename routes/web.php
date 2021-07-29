@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\ChoferController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -16,3 +16,16 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+/*
+Route::get('/chofer', function () {
+    return view('chofer.index');
+});
+
+Route::get('/chofer', function () {
+    return view('chofer.index');
+});
+
+Route::get('/chofer/create',[ChoferController::class,'create']);
+*/
+Route::resource('chofer',ChoferController::class);

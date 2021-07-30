@@ -17,7 +17,7 @@ class ChoferController extends Controller
     public function index()
     {
         //
-        $datos['chofers'] = Chofer::paginate(5);
+        $datos['chofers'] = Chofer::paginate(8);
         return view('chofer.index', $datos);
     }
 
@@ -40,6 +40,23 @@ class ChoferController extends Controller
      */
     public function store(Request $request)
     {
+
+        $valida = [
+            'nombre' => 'required|string|max:100',
+            'apellidoPaterno' => 'required|string|max:100',
+            'apellidoMaterno' => 'required|string|max:100',
+            'fechaNacimiento' => 'required',
+            'correo' => 'required|email',
+            'foto' => 'required|file|max:10000|mimes:jpeg,png,jpg',
+        ];
+
+$mensaje=[
+    'required'=>'El :attribute es requerido',
+    'foto.required'=>'La foto es requerida',
+    'foto.mimes'=>'La foto debe ser de formato jpeg,jpg o png',
+];
+
+$this->validate($request,$valida,$mensaje);
         //$datosEmpleado=request()->all();
         $datosEmpleado = request()->except('_token');
 
@@ -48,9 +65,9 @@ class ChoferController extends Controller
         }
 
         Chofer::insert($datosEmpleado);
-     //   return response()->json($datosEmpleado);
+        //   return response()->json($datosEmpleado);
 
-     return redirect('chofer')->with('mensaje','Chofer agregado con exito');
+        return redirect('chofer')->with('mensaje', 'Chofer agregado con exito');
     }
 
     /**
@@ -87,9 +104,31 @@ class ChoferController extends Controller
     public function update(Request $request, $id)
     {
         //
+
+
+        $valida = [
+            'nombre' => 'required|string|max:100',
+            'apellidoPaterno' => 'required|string|max:100',
+            'apellidoMaterno' => 'required|string|max:100',
+            'fechaNacimiento' => 'required',
+            'correo' => 'required|email',
+        
+        ];
+
+$mensaje=[
+    'required'=>'El :attribute es requerido',
+];
+
+if (request()->hasFile('foto')){
+$valida=['foto' => 'required|file|max:10000|mimes:jpeg,png,jpg'];
+$mensaje=   ['foto.required'=>'La foto es requerida',
+'foto.mimes'=>'La foto debe ser de formato jpeg,jpg o png'];
+}
+
+
+$this->validate($request,$valida,$mensaje);
+
         $datosEmpleado = request()->except(['_token', '_method']);
-
-
         if (request()->hasFile('foto')) {
             $chofer = Chofer::findOrfail($id);
             Storage::delete('public/' . $chofer->foto);
@@ -98,7 +137,12 @@ class ChoferController extends Controller
 
         Chofer::where('id', '=', $id)->update($datosEmpleado);
         $chofer = Chofer::findOrfail($id);
-        return view('chofer.edit', compact('chofer'));
+
+
+
+       // return view('chofer.edit', compact('chofer'));
+
+       return redirect('chofer')->with('mensaje', 'Chofer actualizado');
     }
 
     /**
@@ -111,12 +155,12 @@ class ChoferController extends Controller
     {
         //
         $chofer = Chofer::findOrfail($id);
-if(Storage::delete('public/' . $chofer->foto)){
-    Chofer::destroy($id);
-}
-    
+        if (Storage::delete('public/' . $chofer->foto)) {
+            Chofer::destroy($id);
+        }
 
 
-return redirect('chofer')->with('mensaje','Chofer eliminado');//Hacemos un redirect para volver al index ruta
+
+        return redirect('chofer')->with('mensaje', 'Chofer eliminado'); //Hacemos un redirect para volver al index ruta
     }
 }

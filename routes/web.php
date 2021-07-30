@@ -29,11 +29,11 @@ Route::get('/chofer', function () {
 Route::get('/chofer/create',[ChoferController::class,'create']);
 */
 Route::resource('chofer',ChoferController::class)->middleware('auth');
-Auth::routes(['register'=>false,]);
+Auth::routes();
 
 Route::get('/home',[ChoferController::class,'index'])->name('home');
 
 Route::group(['middleware'=>'auth'],function () {
     Route::get('/',[ChoferController::class,'index'])->name('home');
-
+ //
 });

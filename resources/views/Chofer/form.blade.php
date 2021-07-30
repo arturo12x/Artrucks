@@ -35,7 +35,8 @@
             <div class="form-group">
                 <label for="fechaNacimiento">Fecha de Nacimiento</label>
                 <input class="form-control" type="date" name="fechaNacimiento" id="fechaNacimiento"
-                    value="{{isset($chofer->fechaNacimento)?$chofer->fechaNacimento:old('fechaNacimento')}}">
+                    value="{{isset($chofer->fechaNacimento)?date("d-m-Y", strtotime($chofer->fechaNacimento)):old('fechaNacimento')}}">
+               
             </div>
             <div class="form-group">
                 <label for="correo">Correo</label>

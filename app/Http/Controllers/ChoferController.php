@@ -91,6 +91,9 @@ $this->validate($request,$valida,$mensaje);
     {
         //
         $chofer = Chofer::findOrfail($id);
+ 
+
+
         return view('chofer.edit', compact('chofer'));
     }
 

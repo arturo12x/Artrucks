@@ -35,5 +35,5 @@ Route::get('/home',[ChoferController::class,'index'])->name('home');
 
 Route::group(['middleware'=>'auth'],function () {
     Route::get('/',[ChoferController::class,'index'])->name('home');
-
+ //
 });

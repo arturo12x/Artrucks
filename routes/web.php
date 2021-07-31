@@ -13,9 +13,6 @@ use App\Http\Controllers\ChoferController;
 |
 */
 
-Route::get('/', function () {
-    return view('auth.mylogin');
-});
 
 /*
 Route::get('/chofer', function () {
@@ -29,11 +26,20 @@ Route::get('/chofer', function () {
 Route::get('/chofer/create',[ChoferController::class,'create']);
 */
 Route::resource('chofer',ChoferController::class)->middleware('auth');
+
+Route::get('/', function () {
+    return view('bienvenida.index');
+})->middleware('auth');
+
 Auth::routes();
 
-Route::get('/home',[ChoferController::class,'index'])->name('home');
+
+
+
 
 Route::group(['middleware'=>'auth'],function () {
-    Route::get('/',[ChoferController::class,'index'])->name('home');
- //
+
+    Route::get('/bienvenida', function () {
+        return view('bienvenida.index');
+    });
 });

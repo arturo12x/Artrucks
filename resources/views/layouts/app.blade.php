@@ -24,7 +24,10 @@
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-dark shadow-sm" style="background-color:  rgb(200, 3, 21);">
             <div class="container">
-                <a class="navbar-brand" href="{{ url('/') }}">Artrucks
+                <a class="navbar-brand" href="{{ url('/') }}">
+                    <i class="fas fa-truck"></i>
+                    
+                    Artrucks
                 </a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse"
                     data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"

@@ -23,8 +23,6 @@ aria-label="Close" btn-lg btn-block"> <span aria-hidden="true">&times;</span></b
             <th>#</th>
             <th>Foto</th>
             <th>Nombre</th>
-            <th>Apellido Paterno</th>
-            <th>Apellido Materno</th>
             <th>Edad</th>
             <th>Correo</th>
             <th>Acciones</th>
@@ -40,12 +38,9 @@ aria-label="Close" btn-lg btn-block"> <span aria-hidden="true">&times;</span></b
         <img class="img-thumbnail img-fluid" width="100" src="{{asset('storage').'/'.$chofer->foto}}" alt="">
             {{--PARA QUE FUNCIONE LO DEL STORAGE HAY QUE EJECUTAR PRIMER PHP ARTISAN STORAGE:LINK!---}}
             </td>
-
-            <td>{{$chofer->nombre}}</td>
-            <td>{{$chofer->apellidoPaterno}}</td>
-            <td>{{$chofer->apellidoMaterno}}</td>
-            <td>{{$chofer->fechaNacimiento}}</td>
-            <td>{{$chofer->correo}}</td>
+            <td>{{$chofer->name}}</td>
+            <td>{{$chofer->fechaNacimiento}} años</td>
+            <td>{{$chofer->email}}</td>
             <td>
                 <a href="{{url('/chofer').'/'.$chofer->id.'/edit'}}" class="btn btn-warning">
             <i class="fas fa-pen"></i>
@@ -54,10 +49,9 @@ aria-label="Close" btn-lg btn-block"> <span aria-hidden="true">&times;</span></b
                
                 <form action="{{ url('/chofer').'/'.$chofer->id}}" method="post" class="d-inline">
                 @csrf {{-- EL CSRF ES UNA LLAVE O UN TOKEN OBLIGATORIO DE USAR EN LARAVEL ES POR SEGURIDAD PARA QUE UN FORMULARIO NO PUEDA SUPLANTAR!--}}
-
                 {{method_field('DELETE')}} {{--ESTO ES PORQUE EL DELETE CUANDO SE CONSULTA EL PHP ARTISAN R:L NOS DICE QUE PARA ELIMINAR LOS DATOS REQUIEREN SER ENVIADOS POR EL METODO DELETE!--}}
-
-                <button class="btn btn-danger" type="submit" onclick="return confirm('¿Esta seguro que desea eliminar el registro?')" value="borrar"> <i class="fas fa-trash-alt"></i></button
+                <button class="btn btn-danger" type="submit" onclick="return confirm('¿Esta seguro que desea eliminar el registro?')" value="borrar"> <i class="fas fa-trash-alt"></i>
+                </button>
             </form>
                 </td>
         </tr>

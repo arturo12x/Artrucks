@@ -15,11 +15,7 @@ class CreateChofersTable extends Migration
     {
         Schema::create('chofers', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre');
-            $table->string('apellidoPaterno');
-            $table->string('apellidoMaterno');
             $table->date('fechaNacimiento');
-            $table->string('correo');
             $table->string('foto');
             $table->timestamps();
         });

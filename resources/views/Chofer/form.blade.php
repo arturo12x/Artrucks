@@ -35,12 +35,13 @@
             <div class="form-group">
                 <label for="fechaNacimiento">Fecha de Nacimiento</label>
                 <input class="form-control" type="date" name="fechaNacimiento" id="fechaNacimiento"
-                    value="{{isset($chofer->fechaNacimento)?$chofer->fechaNacimento:old('fechaNacimento')}}">
+                    value="{{isset($chofer->fechaNacimento)?date("d-m-Y", strtotime($chofer->fechaNacimento)):old('fechaNacimento')}}">
+               
             </div>
             <div class="form-group">
                 <label for="correo">Correo</label>
-                <input class="form-control" type="email" name="correo" id="correo"
-                    value="{{isset($chofer->correo)?$chofer->correo:old('correo')}}">
+                <input class="form-control" type="email" name="email" id="email"
+                    value="{{isset($chofer->email)?$chofer->email:old('email')}}">
             </div>
             <div class="form-group">
                 @if(isset($chofer->foto))
@@ -48,6 +49,7 @@
                 @endif
                 <input class="form-control" type="file" name="foto" id="foto">
             </div>
+
         </div>
         <div class="card-footer">
             <input class="btn btn-success" type="submit" value="{{$modo}}">

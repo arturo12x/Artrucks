@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Chofer;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
+
 
 class ChoferController extends Controller
 {
@@ -17,7 +20,30 @@ class ChoferController extends Controller
     public function index()
     {
         //
-        $datos['chofers'] = Chofer::paginate(8);
+
+
+        $datos['chofers'] = DB::table('chofers')
+            ->join('usuario_chofers', 'chofers.id', '=', 'usuario_chofers.chofer_id')
+            ->join('users', 'usuario_chofers.user_id', '=', 'users.id')
+            ->select('chofers.id as id',
+            'chofers.fechaNacimiento as fechaNacimiento',
+            'chofers.foto as foto',
+            'users.name as name',
+            'users.email as email',
+            'users.password as password') //EL SELECT ES PARA TRAERME SOLO LOS DATOS QUE QUIERO DE LAS TRES TABLAS SELECCIONADAS ESTO PORQUE SE REPITE EL NOMBRE DE (ID) ASI SOLO ME TRAIGO EL ID QUE ME INTERSA QUE ES EL DE CHOFERS
+            ->paginate(8);
+
+
+
+
+$size=count($datos['chofers']);
+
+for($i=0;$i<$size;$i++){
+    $datos['chofers'][$i]->fechaNacimiento=Carbon::parse($datos['chofers'][$i]->fechaNacimiento)->age;
+}
+
+
+
         return view('chofer.index', $datos);
     }
 
@@ -46,25 +72,47 @@ class ChoferController extends Controller
             'apellidoPaterno' => 'required|string|max:100',
             'apellidoMaterno' => 'required|string|max:100',
             'fechaNacimiento' => 'required',
-            'correo' => 'required|email',
+            'email' => 'required|email|unique:users',
             'foto' => 'required|file|max:10000|mimes:jpeg,png,jpg',
         ];
 
-$mensaje=[
-    'required'=>'El :attribute es requerido',
-    'foto.required'=>'La foto es requerida',
-    'foto.mimes'=>'La foto debe ser de formato jpeg,jpg o png',
-];
+        $mensaje = [
+            'required' => 'El :attribute es requerido',
+            'fechaNacimiento.required' => 'La fecha de nacimiento es requerida',
+            'foto.required' => 'La foto es requerida',
+            'foto.mimes' => 'La foto debe ser de formato jpeg,jpg o png',
+            'email.unique' => 'El correo ingresado ya se encuentra en otra cuenta, por favor registre uno nuevo'
+        ];
 
-$this->validate($request,$valida,$mensaje);
+        $this->validate($request, $valida, $mensaje);
         //$datosEmpleado=request()->all();
-        $datosEmpleado = request()->except('_token');
+
+        $datosChofer = request()->except('_token');
 
         if ($request->hasFile('foto')) {
-            $datosEmpleado['foto'] = $request->file('foto')->store('uploads', 'public');
+            $datosChofer['foto'] = $request->file('foto')->store('uploads', 'public');
         }
+        //insertar datos (fechaNAC y foto en tabla chofer)
+        $inserIdChofer = Chofer::insertGetId([
+            'fechaNacimiento' => $datosChofer['fechaNacimiento'],
+            'foto' => $datosChofer['foto'],
+        ]);
 
-        Chofer::insert($datosEmpleado);
+        $name = $datosChofer['nombre'] . ' ' . $datosChofer['apellidoPaterno'] . ' ' . $datosChofer['apellidoMaterno'];
+        $email = $datosChofer['email'];
+        $pass = 'password';
+
+        $inserIdUser = DB::table('users')->insertGetId([
+            'name' => $name,
+            'email' => $email,
+            'password' => Hash::make($pass),
+        ]);
+
+        DB::table('usuario_chofers')->insert([
+            'user_id' => $inserIdUser,
+            'chofer_id' => $inserIdChofer,
+        ]);
+
         //   return response()->json($datosEmpleado);
 
         return redirect('chofer')->with('mensaje', 'Chofer agregado con exito');
@@ -112,21 +160,23 @@ $this->validate($request,$valida,$mensaje);
             'apellidoMaterno' => 'required|string|max:100',
             'fechaNacimiento' => 'required',
             'correo' => 'required|email',
-        
+
         ];
 
-$mensaje=[
-    'required'=>'El :attribute es requerido',
-];
+        $mensaje = [
+            'required' => 'El :attribute es requerido',
+        ];
 
-if (request()->hasFile('foto')){
-$valida=['foto' => 'required|file|max:10000|mimes:jpeg,png,jpg'];
-$mensaje=   ['foto.required'=>'La foto es requerida',
-'foto.mimes'=>'La foto debe ser de formato jpeg,jpg o png'];
-}
+        if (request()->hasFile('foto')) {
+            $valida = ['foto' => 'required|file|max:10000|mimes:jpeg,png,jpg'];
+            $mensaje =   [
+                'foto.required' => 'La foto es requerida',
+                'foto.mimes' => 'La foto debe ser de formato jpeg,jpg o png'
+            ];
+        }
 
 
-$this->validate($request,$valida,$mensaje);
+        $this->validate($request, $valida, $mensaje);
 
         $datosEmpleado = request()->except(['_token', '_method']);
         if (request()->hasFile('foto')) {
@@ -140,9 +190,9 @@ $this->validate($request,$valida,$mensaje);
 
 
 
-       // return view('chofer.edit', compact('chofer'));
+        // return view('chofer.edit', compact('chofer'));
 
-       return redirect('chofer')->with('mensaje', 'Chofer actualizado');
+        return redirect('chofer')->with('mensaje', 'Chofer actualizado');
     }
 
     /**
@@ -154,12 +204,16 @@ $this->validate($request,$valida,$mensaje);
     public function destroy($id)
     {
         //
+
         $chofer = Chofer::findOrfail($id);
+
+
         if (Storage::delete('public/' . $chofer->foto)) {
+            $user_id = DB::table('usuario_chofers')->where('chofer_id', '=', $id)->pluck('user_id');
+            DB::table('usuario_chofers')->where('chofer_id', '=', $id)->delete();
+            DB::table('users')->where('id', '=', $user_id)->delete();
             Chofer::destroy($id);
         }
-
-
 
         return redirect('chofer')->with('mensaje', 'Chofer eliminado'); //Hacemos un redirect para volver al index ruta
     }

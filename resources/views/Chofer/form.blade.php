@@ -1,3 +1,4 @@
+
 @extends('layouts.app')
 @section('content')
 <div class="container">
@@ -20,18 +21,9 @@
             <div class="form-group">
                 <label for="nombre">Nombre</label>
                 <input class="form-control" type="text" name="nombre" id="nombre"
-                    value="{{ isset($chofer->nombre)?$chofer->nombre:old('nombre') }}">
+                    value="{{ isset($chofer->name)?$chofer->name:old('name') }}">
             </div>
-            <div class="form-group">
-                <label for="apellidoPaterno">Apellido Paterno</label>
-                <input class="form-control" type="text" name="apellidoPaterno" id="apellidoPaterno"
-                    value="{{isset($chofer->apellidoPaterno)?$chofer->apellidoPaterno:old('apellidoPaterno')}}">
-            </div>
-            <div class="form-group">
-                <label for="apellidoMaterno">Apellido Materno</label>
-                <input class="form-control" type="text" name="apellidoMaterno" id="apellidoMaterno"
-                    value="{{isset($chofer->apellidoMaterno)?$chofer->apellidoMaterno:old('apellidoMaterno')}}">
-            </div>
+            
             <div class="form-group">
                 <label for="fechaNacimiento">Fecha de Nacimiento</label>
                 <input class="form-control" type="date" name="fechaNacimiento" id="fechaNacimiento"

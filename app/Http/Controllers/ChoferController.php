@@ -25,22 +25,24 @@ class ChoferController extends Controller
         $datos['chofers'] = DB::table('chofers')
             ->join('usuario_chofers', 'chofers.id', '=', 'usuario_chofers.chofer_id')
             ->join('users', 'usuario_chofers.user_id', '=', 'users.id')
-            ->select('chofers.id as id',
-            'chofers.fechaNacimiento as fechaNacimiento',
-            'chofers.foto as foto',
-            'users.name as name',
-            'users.email as email',
-            'users.password as password') //EL SELECT ES PARA TRAERME SOLO LOS DATOS QUE QUIERO DE LAS TRES TABLAS SELECCIONADAS ESTO PORQUE SE REPITE EL NOMBRE DE (ID) ASI SOLO ME TRAIGO EL ID QUE ME INTERSA QUE ES EL DE CHOFERS
+            ->select(
+                'chofers.id as id',
+                'chofers.fechaNacimiento as fechaNacimiento',
+                'chofers.foto as foto',
+                'users.name as name',
+                'users.email as email',
+                'users.password as password'
+            ) //EL SELECT ES PARA TRAERME SOLO LOS DATOS QUE QUIERO DE LAS TRES TABLAS SELECCIONADAS ESTO PORQUE SE REPITE EL NOMBRE DE (ID) ASI SOLO ME TRAIGO EL ID QUE ME INTERSA QUE ES EL DE CHOFERS
             ->paginate(8);
 
 
 
 
-$size=count($datos['chofers']);
+        $size = count($datos['chofers']);
 
-for($i=0;$i<$size;$i++){
-    $datos['chofers'][$i]->fechaNacimiento=Carbon::parse($datos['chofers'][$i]->fechaNacimiento)->age;
-}
+        for ($i = 0; $i < $size; $i++) {
+            $datos['chofers'][$i]->fechaNacimiento = Carbon::parse($datos['chofers'][$i]->fechaNacimiento)->age;
+        }
 
 
 
@@ -67,11 +69,11 @@ for($i=0;$i<$size;$i++){
     public function store(Request $request)
     {
 
+
+        $hoy = date('m/d/Y');
         $valida = [
             'nombre' => 'required|string|max:100',
-            'apellidoPaterno' => 'required|string|max:100',
-            'apellidoMaterno' => 'required|string|max:100',
-            'fechaNacimiento' => 'required',
+            'fechaNacimiento' => 'required|before_or_equal:' . $hoy,
             'email' => 'required|email|unique:users',
             'foto' => 'required|file|max:10000|mimes:jpeg,png,jpg',
         ];
@@ -79,9 +81,11 @@ for($i=0;$i<$size;$i++){
         $mensaje = [
             'required' => 'El :attribute es requerido',
             'fechaNacimiento.required' => 'La fecha de nacimiento es requerida',
+            'fechaNacimiento.before_or_equal' => 'La fecha de nacimiento no puede ser mayor a la fecha actual',
             'foto.required' => 'La foto es requerida',
             'foto.mimes' => 'La foto debe ser de formato jpeg,jpg o png',
             'email.unique' => 'El correo ingresado ya se encuentra en otra cuenta, por favor registre uno nuevo'
+
         ];
 
         $this->validate($request, $valida, $mensaje);
@@ -98,7 +102,7 @@ for($i=0;$i<$size;$i++){
             'foto' => $datosChofer['foto'],
         ]);
 
-        $name = $datosChofer['nombre'] . ' ' . $datosChofer['apellidoPaterno'] . ' ' . $datosChofer['apellidoMaterno'];
+        $name = $datosChofer['nombre'];
         $email = $datosChofer['email'];
         $pass = 'password';
 
@@ -138,8 +142,25 @@ for($i=0;$i<$size;$i++){
     public function edit($id)
     {
         //
-        $chofer = Chofer::findOrfail($id);
-        return view('chofer.edit', compact('chofer'));
+
+
+
+        $chofers = DB::table('chofers')
+            ->join('usuario_chofers', 'chofers.id', '=', 'usuario_chofers.chofer_id')
+            ->join('users', 'usuario_chofers.user_id', '=', 'users.id')
+            ->select(
+                'chofers.id as id',
+                'chofers.fechaNacimiento as fechaNacimiento',
+                'chofers.foto as foto',
+                'users.name as name',
+                'users.email as email',
+                'users.password as password'
+            )->where('chofers.id', $id)->get();
+
+        $chofers['chofer'] = $chofers[0];
+        unset($chofers[0]);
+
+        return view('chofer.edit', $chofers);
     }
 
     /**
@@ -154,17 +175,19 @@ for($i=0;$i<$size;$i++){
         //
 
 
+        $hoy = date('m/d/Y');
         $valida = [
             'nombre' => 'required|string|max:100',
-            'apellidoPaterno' => 'required|string|max:100',
-            'apellidoMaterno' => 'required|string|max:100',
-            'fechaNacimiento' => 'required',
-            'correo' => 'required|email',
-
+            'fechaNacimiento' => 'required|before_or_equal:' . $hoy,
+            'email' => 'required|email|unique:users' . ($id ? ",id,$id" : ''),
         ];
 
         $mensaje = [
             'required' => 'El :attribute es requerido',
+            'fechaNacimiento.required' => 'La fecha de nacimiento es requerida',
+            'fechaNacimiento.before_or_equal' => 'La fecha de nacimiento no puede ser mayor a la fecha actual',
+            'email.unique' => 'El correo ingresado ya se encuentra en otra cuenta, por favor registre uno nuevo'
+
         ];
 
         if (request()->hasFile('foto')) {
@@ -178,16 +201,43 @@ for($i=0;$i<$size;$i++){
 
         $this->validate($request, $valida, $mensaje);
 
-        $datosEmpleado = request()->except(['_token', '_method']);
+        $datosChofer = request()->except(['_token', '_method']);
         if (request()->hasFile('foto')) {
             $chofer = Chofer::findOrfail($id);
             Storage::delete('public/' . $chofer->foto);
-            $datosEmpleado['foto'] = $request->file('foto')->store('uploads', 'public');
+            $datosChofer['foto'] = $request->file('foto')->store('uploads', 'public');
         }
 
-        Chofer::where('id', '=', $id)->update($datosEmpleado);
-        $chofer = Chofer::findOrfail($id);
 
+
+        if (request()->hasFile('foto')) {
+            Chofer::where('id', $id)->update([
+                'fechaNacimiento' => $datosChofer['fechaNacimiento'],
+                'foto' => $datosChofer['foto'],
+            ]);
+        } else {
+            Chofer::where('id', $id)->update([
+                'fechaNacimiento' => $datosChofer['fechaNacimiento'],
+
+            ]);
+        }
+
+        $user_id = DB::table('usuario_chofers')->where('chofer_id', '=', $id)->pluck('user_id');
+        $name = $datosChofer['nombre'];
+        $email = $datosChofer['email'];
+        $pass = 'password';
+
+
+        DB::table('users')->where('id', $user_id)->update([
+            'name' => $name,
+            'email' => $email,
+            'password' => Hash::make($pass),
+        ]);
+
+        DB::table('usuario_chofers')->where('chofer_id', '=', $id)->update([
+            'user_id' =>($user_id->implode('')),
+            'chofer_id' => $id,
+        ]);
 
 
         // return view('chofer.edit', compact('chofer'));

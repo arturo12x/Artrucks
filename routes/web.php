@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ChoferController;
+use App\Http\Controllers\BienvenidaController;
 use App\Http\Controllers\CamionController;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -32,9 +33,9 @@ Route::resource('chofer',ChoferController::class)->middleware('auth');
 Route::resource('camion',CamionController::class)->middleware('auth');
 
 
-Route::get('/', function () {
-    return view('bienvenida.index');
-})->middleware('auth');
+
+Route::get('/',[BienvenidaController::class,'index'])->middleware('auth');
+
 
 Auth::routes();
 
@@ -42,7 +43,5 @@ Auth::routes();
 
 
 Route::group(['middleware'=>'auth'],function () {
-    Route::get('/bienvenida', function () {
-        return view('bienvenida.index');
-    });
+    Route::get('/',[BienvenidaController::class,'index']);
 });

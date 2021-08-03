@@ -15,12 +15,13 @@ class CreateCamionsTable extends Migration
     {
         Schema::create('camions', function (Blueprint $table) {
             $table->id();
-            $table->foreign('chofer_id')->references('id')->on('chofers');
+            $table->unsignedBigInteger('user_id');
             $table->string('placas');
+            $table->string('apodo');
             $table->string('marca');
-            $table->string('modelo');
-            $table->smallInteger('anio');
-            $table->smallInteger('kilometraje');
+            $table->string('tipo');
+            $table->integer('anio');
+            $table->integer('kilometraje');
             $table->timestamps();
         });
     }

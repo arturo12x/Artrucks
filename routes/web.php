@@ -4,8 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ChoferController;
 use App\Http\Controllers\BienvenidaController;
 use App\Http\Controllers\CamionController;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
+use App\Http\Controllers\RutasController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -31,7 +31,7 @@ Route::get('/chofer/create',[ChoferController::class,'create']);
 */
 Route::resource('chofer',ChoferController::class)->middleware('auth');
 Route::resource('camion',CamionController::class)->middleware('auth');
-
+Route::resource('ruta',RutasController::class)->middleware('auth');
 
 
 Route::get('/',[BienvenidaController::class,'index'])->middleware('auth');

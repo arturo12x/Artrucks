@@ -62,7 +62,7 @@
         <div class="card-body">
           <h5 class="card-title font-weight-bold">CAMIONES</h5>
           <p class="card-text">Catalogo de las unidades del chofer.</p>
-          <a href="#" class="btn btn-outline-danger">Ir a los camiones</a>
+          <a href="{{url('camion/')}}" class="btn btn-outline-danger">Ir a los camiones</a>
         </div>
       </div>
     </div>
@@ -76,7 +76,7 @@
           <h5 class="card-title font-weight-bold">RUTAS</h5>
           <p class="card-text">Control de puntos de partida y destino.</p>
           <br>
-          <a href="#"  class="btn btn-outline-danger">Ir a las rutas</a>
+          <a href="{{url('ruta')}}"  class="btn btn-outline-danger">Ir a las rutas</a>
         </div>
       </div>
     </div>

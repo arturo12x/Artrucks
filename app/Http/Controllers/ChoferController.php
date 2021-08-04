@@ -186,16 +186,15 @@ class ChoferController extends Controller
             'required' => 'El :attribute es requerido',
             'fechaNacimiento.required' => 'La fecha de nacimiento es requerida',
             'fechaNacimiento.before_or_equal' => 'La fecha de nacimiento no puede ser mayor a la fecha actual',
-            'email.unique' => 'El correo ingresado ya se encuentra en otra cuenta, por favor registre uno nuevo'
+            'email.unique' => 'El correo ingresado ya se encuentra en otra cuenta, por favor registre uno nuevo',
 
         ];
 
         if (request()->hasFile('foto')) {
-            $valida = ['foto' => 'required|file|max:10000|mimes:jpeg,png,jpg'];
-            $mensaje =   [
-                'foto.required' => 'La foto es requerida',
-                'foto.mimes' => 'La foto debe ser de formato jpeg,jpg o png'
-            ];
+             array_push($valida,['foto' => 'required|file|max:10000|mimes:jpeg,png,jpg']);
+            array_push($mensaje,['foto.required' => 'La foto es requerida',
+            'foto.mimes' => 'La foto debe ser de formato jpeg,jpg o png']);
+          
         }
 
 

@@ -10,7 +10,7 @@
     <div class="row no-gutters">
       <div class="col">
 
-        <img src="{{isset($chofer[0])?asset('storage').'/'.$chofer[0]:asset('resources/admin.jpeg') }}" class="bd-placeholder-img" width="100%" height="250"  alt="...">
+        <img src="{{isset($chofer[0])?asset('storage').'/'.$chofer[0]:asset('resources/admin.jpeg') }}" class="bd-placeholder-img" width="70%" height="250"  alt="...">
         
       </div>
       <div class="col-md-8">

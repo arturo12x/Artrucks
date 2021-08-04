@@ -28,6 +28,10 @@
                     value="{{isset($camion->apodo)?$camion->apodo:old('apodo')}}" placeholder="Ingrese el apodo" required>
             </div>
 
+
+<div class="row">
+
+            <div class="col">
             <div class="form-group">
                 <label for="marca">Marca</label>
                 <select class="form-control" id="marca" name="marca">
@@ -43,7 +47,8 @@
                     </option>
                 </select>
             </div>
-
+        </div>
+        <div class="col">
             <div class="form-group">
                 <label for="modelo">Tipo</label>
                 <select class="form-control" id="tipo" name="tipo">
@@ -60,26 +65,31 @@
                         Portacoches</option>
                 </select>
             </div>
-
-
+        </div>
+        </div>
+<div class="row">
+<div class="col">
             <div class="form-group">
                 <label for="anio">Año</label>
                 <input type="number" class="form-control" id="anio" name="anio"
                     value="{{isset($camion->anio)?$camion->anio:old('anio')}}" placeholder="Ingrese el año" required>
             </div>
-
+        </div>
+        <div class="col">
             <div class="form-group">
                 <label for="placas">Placas</label>
                 <input type="text" class="form-control" id="placas" name="placas"
                     value="{{isset($camion->placas)?$camion->placas:old('placas')}}" placeholder="Ingrese las placas" required>
             </div>
-
+        </div>
+        <div class="col">
             <div class="form-group">
                 <label for="kilometraje">Kilometraje</label>
                 <input type="number" class="form-control" id="kilometraje" name="kilometraje"
                     value="{{isset($camion->kilometraje)?$camion->kilometraje:old('kilometraje')}}" placeholder="Ingrese el kilometraje" required>
             </div>
-
+        </div>
+        </div>
         </div>
         <div class="card-footer">
             <a class="btn btn-primary" href="{{url('/camion')}}">Regresar</a>

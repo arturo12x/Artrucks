@@ -45,7 +45,7 @@ aria-label="Close" btn-lg btn-block"> <span aria-hidden="true">&times;</span></b
 <form action="{{url('/camion').'/'.$camion->id}}" method="POST" class="d-inline">
     @csrf
     {{method_field('DELETE')}}
-    <button class="btn btn-danger"><i class="fas fa-trash-alt"></i></button>
+    <button class="btn btn-danger"  onclick="return confirm('¿Esta seguro que desea eliminar el registro?')" ><i class="fas fa-trash-alt"></i></button>
 </form>
 </td>
             

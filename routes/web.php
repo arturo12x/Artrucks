@@ -5,6 +5,7 @@ use App\Http\Controllers\ChoferController;
 use App\Http\Controllers\BienvenidaController;
 use App\Http\Controllers\CamionController;
 use App\Http\Controllers\RutasController;
+use App\Http\Controllers\Auth\LoginController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,6 +37,7 @@ Route::resource('ruta',RutasController::class)->middleware('auth');
 
 Route::get('/',[BienvenidaController::class,'index'])->middleware('auth');
 
+Route::get('/update', [LoginController::class, 'refreshCaptcha'])->name('refresh');
 
 Auth::routes();
 
